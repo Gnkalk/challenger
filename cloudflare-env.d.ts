@@ -5,6 +5,10 @@ declare namespace Cloudflare {
 	interface Env {
 		NEXTJS_ENV: string;
 		ASSETS: Fetcher;
+        AUTH_SECRET: string;
+        DB: D1Database;
+        AUTH_GITHUB_ID: string;
+        AUTH_GITHUB_SECRET: string;
 	}
 }
 interface CloudflareEnv extends Cloudflare.Env {}
