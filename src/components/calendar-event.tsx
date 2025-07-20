@@ -25,7 +25,7 @@ const events = [
   },
 ];
 
-export default function Calendar31() {
+export default function CalendarEvent() {
   const [date, setDate] = React.useState<Date | undefined>(
     new Date(2025, 5, 12)
   );
