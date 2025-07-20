@@ -9,6 +9,8 @@ declare namespace Cloudflare {
         DB: D1Database;
         AUTH_GITHUB_ID: string;
         AUTH_GITHUB_SECRET: string;
+        AUTH_GOOGLE_ID: string;
+        AUTH_GOOGLE_SECRET: string;
 	}
 }
 interface CloudflareEnv extends Cloudflare.Env {}

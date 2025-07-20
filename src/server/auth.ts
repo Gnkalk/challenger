@@ -3,6 +3,7 @@ import { NextAuthResult } from 'next-auth';
 import { D1Adapter } from '@auth/d1-adapter';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import GitHub from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
 
 const authResult = async (): Promise<NextAuthResult> => {
   return NextAuth({
@@ -12,6 +13,12 @@ const authResult = async (): Promise<NextAuthResult> => {
           .AUTH_GITHUB_ID,
         clientSecret: (await getCloudflareContext({ async: true })).env
           .AUTH_GITHUB_SECRET,
+      }),
+      Google({
+        clientId: (await getCloudflareContext({ async: true })).env
+          .AUTH_GOOGLE_ID,
+        clientSecret: (await getCloudflareContext({ async: true })).env
+          .AUTH_GOOGLE_SECRET,
       }),
     ],
     adapter: D1Adapter((await getCloudflareContext({ async: true })).env.DB),

@@ -5,7 +5,7 @@ export default async function Home() {
   const session = await auth();
 
   if (!session) redirect('/login');
-  else redirect('/challenges');
+  else redirect('/dashboard');
 
   return null;
 }
