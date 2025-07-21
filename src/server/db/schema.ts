@@ -10,7 +10,7 @@ import {
 export const challengesTable = sqliteTable('challenge', {
   id: text()
     .primaryKey()
-    .$defaultFn(() => 'lower(hex(randomblob(16)))'),
+    .$defaultFn(() => crypto.randomUUID()),
   name: text().notNull(),
   description: text().notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
@@ -20,7 +20,6 @@ export const challengesTable = sqliteTable('challenge', {
     .references(() => usersTable.id),
   plan: text().notNull(),
   status: text({ enum: ['open', 'closed'] }).notNull(),
-  activeDays: text('active_days', { mode: 'json' }).notNull(),
 });
 
 export const challengeDayTable = sqliteTable(
@@ -28,7 +27,7 @@ export const challengeDayTable = sqliteTable(
   {
     id: text()
       .primaryKey()
-      .$defaultFn(() => 'lower(hex(randomblob(16)))'),
+      .$defaultFn(() => crypto.randomUUID()),
     challengeId: text()
       .notNull()
       .references(() => challengesTable.id),
@@ -87,20 +86,6 @@ export const sessionsTable = sqliteTable('session', {
   expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
 });
 
-export const verificationTokensTable = sqliteTable(
-  'verificationToken',
-  {
-    identifier: text('identifier').notNull(),
-    token: text('token').notNull(),
-    expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
-  },
-  (verificationToken) => ({
-    compositePk: primaryKey({
-      columns: [verificationToken.identifier, verificationToken.token],
-    }),
-  })
-);
-
 export const authenticatorsTable = sqliteTable(
   'authenticator',
   {
@@ -132,6 +117,7 @@ export const userChallengesRelations = relations(
       references: [usersTable.id],
     }),
     challengeDays: many(challengeDayTable),
+    challengeParticipants: many(challengeParticipants),
   })
 );
 

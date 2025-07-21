@@ -1,9 +1,16 @@
 import NextAuth from 'next-auth';
 import { NextAuthResult } from 'next-auth';
-import { D1Adapter } from '@auth/d1-adapter';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
+import db from './db';
+import {
+  authenticatorsTable,
+  sessionsTable,
+  usersTable,
+  accountsTable,
+} from './db/schema';
 
 const authResult = async (): Promise<NextAuthResult> => {
   return NextAuth({
@@ -21,7 +28,12 @@ const authResult = async (): Promise<NextAuthResult> => {
           .AUTH_GOOGLE_SECRET,
       }),
     ],
-    adapter: D1Adapter((await getCloudflareContext({ async: true })).env.DB),
+    adapter: DrizzleAdapter(await db(), {
+      accountsTable,
+      sessionsTable,
+      usersTable,
+      authenticatorsTable,
+    }),
   });
 };
 
