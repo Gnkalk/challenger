@@ -5,7 +5,6 @@ import { auth, signIn } from './auth';
 import db from './db';
 import { challengeParticipants, challengesTable } from './db/schema';
 import { z } from 'zod/v4';
-import { v4 as uuidv4 } from 'uuid';
 
 export const loginWithGoogleAction = async () => {
   await signIn('google', { redirectTo: '/dashboard' });
@@ -18,6 +17,7 @@ export const loginWithGithubAction = async () => {
 const createChallengeForm = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
+  plan: z.string().min(1),
 });
 
 export const createChallengeAction = async (_prevData: any, form: FormData) => {
@@ -38,7 +38,7 @@ export const createChallengeAction = async (_prevData: any, form: FormData) => {
       name: data.name,
       description: data.description,
       createdBy: session.user?.id,
-      plan: 'lorem ipsum',
+      plan: data.plan,
       status: 'open',
       createdAt: new Date(),
       updatedAt: new Date(),

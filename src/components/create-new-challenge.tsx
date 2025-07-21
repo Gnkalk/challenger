@@ -12,13 +12,15 @@ import {
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
+import { MarkdownEditor } from './md-editor';
 
 export default function CreateNewChallenge() {
   const [state, action, isPending] = useActionState(
     createChallengeAction,
     undefined
   );
+  const [markdown, setMarkdown] = useState('');
 
   return (
     <form className="space-y-4" action={action}>
@@ -51,6 +53,11 @@ export default function CreateNewChallenge() {
             placeholder='e.g. "sss"'
           />
         </div>
+        <input type="hidden" name="plan" value={markdown} />
+        <MarkdownEditor
+          value={markdown}
+          onChange={(value) => setMarkdown(value ?? '')}
+        />
       </div>
       <DialogFooter>
         <DialogClose asChild>
