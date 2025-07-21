@@ -54,10 +54,10 @@ export default function CalendarEvent() {
             variant="ghost"
             size="icon"
             className="size-6"
-            title="Add Event"
+            title="Make challenge"
           >
             <PlusIcon />
-            <span className="sr-only">Add Event</span>
+            <span className="sr-only">Make challenge</span>
           </Button>
         </div>
         <div className="flex w-full flex-col gap-2">
@@ -67,7 +67,7 @@ export default function CalendarEvent() {
               className="bg-muted after:bg-primary/70 relative rounded-md p-2 pl-6 text-sm after:absolute after:inset-y-2 after:left-2 after:w-1 after:rounded-full"
             >
               <div className="font-medium">{event.title}</div>
-              <div className="text-muted-foreground text-xs">ff</div>
+              <div className="text-muted-foreground text-xs">By x</div>
             </div>
           ))}
         </div>

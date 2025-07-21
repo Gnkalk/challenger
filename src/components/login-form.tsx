@@ -27,7 +27,7 @@ export function LoginForm({
             <Button
               variant="outline"
               className="w-full"
-              disabled={isLoggingWithGithub}
+              loading={isLoggingWithGithub}
             >
               <svg
                 role="img"
@@ -47,7 +47,7 @@ export function LoginForm({
             <Button
               variant="outline"
               className="w-full"
-              disabled={isLoggingWithGoogle}
+              loading={isLoggingWithGoogle}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path

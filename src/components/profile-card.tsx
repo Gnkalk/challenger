@@ -8,8 +8,7 @@ import { redirect } from 'next/navigation';
 
 export default async function ProfileCard() {
   const session = await auth();
-
-  //   if (!session) redirect('/login');
+  if (!session) redirect('/login');
 
   return (
     <Card className="py-4">
@@ -17,7 +16,9 @@ export default async function ProfileCard() {
         <div className="flex items-center gap-2">
           <Avatar className="rounded-lg">
             <AvatarImage src={session?.user?.image!} />
-            <AvatarFallback>{session?.user?.name ?? 'P'}</AvatarFallback>
+            <AvatarFallback className="rounded-lg">
+              {session?.user?.name ?? 'P'}
+            </AvatarFallback>
           </Avatar>
           <div className="text-xl font-bold">{session?.user?.name}</div>
         </div>

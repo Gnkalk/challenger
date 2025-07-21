@@ -1,35 +1,212 @@
+import { relations } from 'drizzle-orm';
 import {
   integer,
   primaryKey,
   sqliteTable,
   text,
+  unique,
 } from 'drizzle-orm/sqlite-core';
 
 export const challengesTable = sqliteTable('challenge', {
   id: text()
     .primaryKey()
-    .$defaultFn(() => 'lower(hex(randomblob(16))) '),
+    .$defaultFn(() => 'lower(hex(randomblob(16)))'),
   name: text().notNull(),
   description: text().notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-  createdBy: text('created_by').notNull(),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => usersTable.id),
   plan: text().notNull(),
   status: text({ enum: ['open', 'closed'] }).notNull(),
   activeDays: text('active_days', { mode: 'json' }).notNull(),
-  participants: text('joined_people', { mode: 'json' }).notNull(),
 });
 
 export const challengeDayTable = sqliteTable(
   'challenge_day',
   {
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => 'lower(hex(randomblob(16)))'),
     challengeId: text()
       .notNull()
       .references(() => challengesTable.id),
     day: integer().notNull(),
-    participants: text('joined_people', { mode: 'json' }).notNull(),
+    date: integer('date', { mode: 'timestamp' }).notNull(),
   },
-  (table) => [
-    primaryKey({ name: 'id', columns: [table.challengeId, table.day] }),
-  ]
+  (table) => ({
+    challengeIDByDay: unique('challenge_id_day').on(
+      table.challengeId,
+      table.day
+    ),
+  })
 );
+
+import type { AdapterAccountType } from 'next-auth/adapters';
+
+export const usersTable = sqliteTable('user', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text('name'),
+  email: text('email').unique(),
+  emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
+  image: text('image'),
+});
+
+export const accountsTable = sqliteTable(
+  'account',
+  {
+    userId: text('userId')
+      .notNull()
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
+    type: text('type').$type<AdapterAccountType>().notNull(),
+    provider: text('provider').notNull(),
+    providerAccountId: text('providerAccountId').notNull(),
+    refresh_token: text('refresh_token'),
+    access_token: text('access_token'),
+    expires_at: integer('expires_at'),
+    token_type: text('token_type'),
+    scope: text('scope'),
+    id_token: text('id_token'),
+    session_state: text('session_state'),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  })
+);
+
+export const sessionsTable = sqliteTable('session', {
+  sessionToken: text('sessionToken').primaryKey(),
+  userId: text('userId')
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
+});
+
+export const verificationTokensTable = sqliteTable(
+  'verificationToken',
+  {
+    identifier: text('identifier').notNull(),
+    token: text('token').notNull(),
+    expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (verificationToken) => ({
+    compositePk: primaryKey({
+      columns: [verificationToken.identifier, verificationToken.token],
+    }),
+  })
+);
+
+export const authenticatorsTable = sqliteTable(
+  'authenticator',
+  {
+    credentialID: text('credentialID').notNull().unique(),
+    userId: text('userId')
+      .notNull()
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
+    providerAccountId: text('providerAccountId').notNull(),
+    credentialPublicKey: text('credentialPublicKey').notNull(),
+    counter: integer('counter').notNull(),
+    credentialDeviceType: text('credentialDeviceType').notNull(),
+    credentialBackedUp: integer('credentialBackedUp', {
+      mode: 'boolean',
+    }).notNull(),
+    transports: text('transports'),
+  },
+  (authenticator) => ({
+    compositePK: primaryKey({
+      columns: [authenticator.userId, authenticator.credentialID],
+    }),
+  })
+);
+
+export const userChallengesRelations = relations(
+  challengesTable,
+  ({ one, many }) => ({
+    challengeCreatedBy: one(usersTable, {
+      fields: [challengesTable.createdBy],
+      references: [usersTable.id],
+    }),
+    challengeDays: many(challengeDayTable),
+  })
+);
+
+export const challengeDaysRelations = relations(
+  challengeDayTable,
+  ({ one }) => ({
+    challengeDaysChallenge: one(challengesTable, {
+      fields: [challengeDayTable.challengeId],
+      references: [challengesTable.id],
+    }),
+  })
+);
+
+export const challengeParticipants = sqliteTable(
+  'challenge_participant',
+  {
+    challengeId: text()
+      .notNull()
+      .references(() => challengesTable.id),
+    userId: text()
+      .notNull()
+      .references(() => usersTable.id),
+  },
+  (table) => ({
+    id: primaryKey({ name: 'id', columns: [table.challengeId, table.userId] }),
+  })
+);
+
+export const challengeParticipantsRelations = relations(
+  challengeParticipants,
+  ({ one }) => ({
+    challenge: one(challengesTable, {
+      fields: [challengeParticipants.challengeId],
+      references: [challengesTable.id],
+    }),
+    participant: one(usersTable, {
+      fields: [challengeParticipants.userId],
+      references: [usersTable.id],
+    }),
+  })
+);
+
+export const challengeDayParticipants = sqliteTable(
+  'challenge_day_participant',
+  {
+    challengeDayId: text()
+      .notNull()
+      .references(() => challengeDayTable.id),
+    userId: text()
+      .notNull()
+      .references(() => usersTable.id),
+  },
+  (table) => ({
+    id: primaryKey({
+      name: 'id',
+      columns: [table.challengeDayId, table.userId],
+    }),
+  })
+);
+
+export const challengeDayParticipantsRelations = relations(
+  challengeDayParticipants,
+  ({ one }) => ({
+    challengeDay: one(challengeDayTable, {
+      fields: [challengeDayParticipants.challengeDayId],
+      references: [challengeDayTable.id],
+    }),
+    participant: one(usersTable, {
+      fields: [challengeDayParticipants.userId],
+      references: [usersTable.id],
+    }),
+  })
+);
+
+export const userRelations = relations(usersTable, ({ many }) => ({
+  challenges: many(challengeParticipants),
+  challengeDays: many(challengeDayParticipants),
+}));

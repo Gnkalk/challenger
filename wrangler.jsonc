@@ -54,7 +54,8 @@
     {
       "binding": "DB",
       "database_name": "challenger2",
-      "database_id": "e1a16c9a-244f-48dc-afa0-6700d096a281"
+      "database_id": "e1a16c9a-244f-48dc-afa0-6700d096a281",
+      "migrations_dir": "drizzle"
     }
   ]
 }
