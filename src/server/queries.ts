@@ -25,7 +25,6 @@ export type GetChallengesPromise = ReturnType<typeof getChallenges>;
 
 export const getChallenge = async (id: string) => {
   const session = await auth();
-  if (!session?.user?.id) throw new Error('Not logged in');
 
   const challenge = await (
     await db()
@@ -34,13 +33,19 @@ export const getChallenge = async (id: string) => {
       where: ({ id: challengeId }, { eq }) => eq(challengeId, id),
       with: {
         challengeCreatedBy: true,
+        challengeDays: true,
+        challengeParticipants: {
+          with: {
+            participant: true,
+          },
+        },
       },
     })
     .execute();
 
   if (!challenge) return null;
 
-  const userCreateIt = session.user?.id === challenge.createdBy;
+  const userCreateIt = session?.user?.id === challenge.createdBy;
 
   return {
     ...challenge,

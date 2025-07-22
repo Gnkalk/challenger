@@ -65,7 +65,7 @@ function Challenges({ promise }: { promise: GetChallengesPromise }) {
   const challenges = use(promise);
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full flex-col gap-2 max-h-28 overflow-auto noscrollbar">
       {challenges
         .filter((challenge) => challenge.challenge.status === 'open')
         .map((challenge) => (

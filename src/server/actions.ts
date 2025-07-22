@@ -70,3 +70,34 @@ export const createChallengeAction = async (_prevData: any, form: FormData) => {
 
   return undefined;
 };
+
+export const joinChallengeAction = async (_prevData: any, form: FormData) => {
+  const challengeID = form.get('challengeID') as string | null;
+  if (!challengeID) return { error: 'Invalid challenge ID' };
+
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Not logged in' };
+
+  const challenge = await (
+    await db()
+  ).query.challengeParticipants
+    .findFirst({
+      where: ({ userId, challengeId }, { eq, and }) =>
+        and(eq(userId, session.user?.id ?? ''), eq(challengeId, challengeID)),
+    })
+    .execute();
+
+  if (challenge) return { error: 'Already joined challenge' };
+
+  await (
+    await db()
+  )
+    .insert(challengeParticipants)
+    .values({
+      challengeId: challengeID,
+      userId: session.user?.id,
+    })
+    .execute();
+
+  return undefined;
+};

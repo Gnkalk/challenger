@@ -85,3 +85,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .noscrollbar {
+    scrollbar-width: none;
+  }
+}

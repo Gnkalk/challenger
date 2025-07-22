@@ -27,7 +27,7 @@ export default function ChallengesList({
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value={tab}>
+        <TabsContent value={tab} className="max-h-60 overflow-auto noscrollbar">
           <div className="px-2">
             <div className="flex justify-between items-center">
               <div>
@@ -49,7 +49,6 @@ export default function ChallengesList({
                 <Share />
               </Button>
             </div>
-
             <Markdown
               source={challenges[tab].challenge.plan}
               className="mt-2"
