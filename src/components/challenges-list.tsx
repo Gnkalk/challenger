@@ -30,7 +30,7 @@ export default function ChallengesList({
   );
 
   useEffect(() => {
-    if (!searchParams.get('challenge')) {
+    if (!searchParams.get('challenge') && challenges.length > 0) {
       router.push(
         pathname +
           '?' +
