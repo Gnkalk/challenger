@@ -33,7 +33,15 @@ export const getChallenge = async (id: string) => {
       where: ({ id: challengeId }, { eq }) => eq(challengeId, id),
       with: {
         challengeCreatedBy: true,
-        challengeDays: true,
+        challengeDays: {
+          with: {
+            participants: {
+              with: {
+                participant: true,
+              },
+            },
+          },
+        },
         challengeParticipants: {
           with: {
             participant: true,
@@ -52,3 +60,5 @@ export const getChallenge = async (id: string) => {
     userCreateIt,
   };
 };
+
+export type GetChallengePromise = ReturnType<typeof getChallenge>;

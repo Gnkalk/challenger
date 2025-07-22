@@ -23,7 +23,7 @@ export function LoginForm({
     <>
       <div className={cn('flex flex-col gap-6', className)} {...props}>
         <div className="flex flex-col gap-2">
-          <form action={loginWithGithub}>
+          <form action={loginWithGithub} method="POST">
             <Button
               variant="outline"
               className="w-full"
@@ -43,7 +43,7 @@ export function LoginForm({
               Login with Github
             </Button>
           </form>
-          <form action={loginWithGoogle}>
+          <form action={loginWithGoogle} method="POST">
             <Button
               variant="outline"
               className="w-full"

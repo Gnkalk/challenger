@@ -27,8 +27,9 @@ export default async function ProfileCard() {
             'use server';
             await signOut({ redirectTo: '/login' });
           }}
+          method="POST"
         >
-          <Button>
+          <Button size="icon">
             <LogOut />
           </Button>
         </form>

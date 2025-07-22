@@ -3,8 +3,14 @@
 import 'server-only';
 import { auth, signIn } from './auth';
 import db from './db';
-import { challengeParticipants, challengesTable } from './db/schema';
+import {
+  challengeDayParticipants,
+  challengeDayTable,
+  challengeParticipants,
+  challengesTable,
+} from './db/schema';
 import { z } from 'zod/v4';
+import { eq } from 'drizzle-orm';
 
 export const loginWithGoogleAction = async () => {
   await signIn('google', { redirectTo: '/dashboard' });
@@ -98,6 +104,106 @@ export const joinChallengeAction = async (_prevData: any, form: FormData) => {
       userId: session.user?.id,
     })
     .execute();
+
+  return undefined;
+};
+
+export const doneChallengeAction = async (_prevData: any, form: FormData) => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Not logged in' };
+
+  const challengeID = form.get('challengeID') as string | null;
+  if (!challengeID) return { error: 'Invalid challenge ID' };
+
+  const challenge = await (
+    await db()
+  ).query.challengeParticipants
+    .findFirst({
+      where: ({ userId, challengeId }, { eq, and }) =>
+        and(eq(userId, session.user?.id ?? ''), eq(challengeId, challengeID)),
+
+      with: {
+        challenge: true,
+      },
+    })
+    .execute();
+
+  if (!challenge) return { error: 'Not joined challenge' };
+
+  const startOfDay = new Date().setUTCHours(0, 0, 0, 0);
+  const endOfDay = new Date().setUTCHours(23, 59, 59, 999);
+
+  let challengeDay = await (
+    await db()
+  ).query.challengeDayTable
+    .findFirst({
+      where: ({ challengeId, date }, { eq, and, between }) =>
+        and(
+          eq(challengeId, challengeID),
+          between(date, new Date(startOfDay), new Date(endOfDay))
+        ),
+    })
+    .execute();
+
+  if (!challengeDay) {
+    await (
+      await db()
+    )
+      .insert(challengeDayTable)
+      .values({
+        day: challenge.challenge.day + 1,
+        challengeId: challengeID,
+        date: new Date(),
+      })
+      .execute();
+
+    await (
+      await db()
+    )
+      .update(challengesTable)
+      .set({
+        day: challenge.challenge.day + 1,
+      })
+      .where(eq(challengesTable.id, challengeID))
+      .execute();
+    challengeDay = await (
+      await db()
+    ).query.challengeDayTable
+      .findFirst({
+        where: ({ challengeId, date }, { eq, and }) =>
+          and(eq(challengeId, challengeID), eq(date, new Date())),
+      })
+      .execute();
+  }
+
+  try {
+    await (
+      await db()
+    )
+      .insert(challengeDayParticipants)
+      .values({
+        challengeDayId: challengeDay?.id!,
+        userId: session.user.id,
+      })
+      .execute();
+  } finally {
+    return undefined;
+  }
+};
+
+export const deleteChallengeAction = async (_prevData: any, form: FormData) => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Not logged in' };
+
+  const challengeID = form.get('challengeID') as string | null;
+  if (!challengeID) return { error: 'Invalid challenge ID' };
+
+  await (await db())
+    .delete(challengesTable)
+    .where(eq(challengesTable.id, challengeID))
+    .execute();
+
+  console.log(challengeID);
 
   return undefined;
 };

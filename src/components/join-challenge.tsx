@@ -15,7 +15,7 @@ export default function JoinChallenge({
   );
 
   return (
-    <form className="w-full" action={joinChallenge} method="post">
+    <form className="w-full" action={joinChallenge} method="POST">
       <input type="hidden" name="challengeID" value={challengeID} />
       <Button className="w-full" loading={isJoiningChallenge}>
         Challenge your self with others

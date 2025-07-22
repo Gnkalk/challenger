@@ -17,9 +17,10 @@ export const challengesTable = sqliteTable('challenge', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
   createdBy: text('created_by')
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   plan: text().notNull(),
   status: text({ enum: ['open', 'closed'] }).notNull(),
+  day: integer('day').notNull().default(0),
 });
 
 export const challengeDayTable = sqliteTable(
@@ -30,7 +31,7 @@ export const challengeDayTable = sqliteTable(
       .$defaultFn(() => crypto.randomUUID()),
     challengeId: text()
       .notNull()
-      .references(() => challengesTable.id),
+      .references(() => challengesTable.id, { onDelete: 'cascade' }),
     day: integer().notNull(),
     date: integer('date', { mode: 'timestamp' }).notNull(),
   },
@@ -123,11 +124,12 @@ export const userChallengesRelations = relations(
 
 export const challengeDaysRelations = relations(
   challengeDayTable,
-  ({ one }) => ({
+  ({ one, many }) => ({
     challengeDaysChallenge: one(challengesTable, {
       fields: [challengeDayTable.challengeId],
       references: [challengesTable.id],
     }),
+    participants: many(challengeDayParticipants),
   })
 );
 
@@ -136,10 +138,10 @@ export const challengeParticipants = sqliteTable(
   {
     challengeId: text()
       .notNull()
-      .references(() => challengesTable.id),
+      .references(() => challengesTable.id, { onDelete: 'cascade' }),
     userId: text()
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
   },
   (table) => ({
     id: primaryKey({ name: 'id', columns: [table.challengeId, table.userId] }),
@@ -165,10 +167,10 @@ export const challengeDayParticipants = sqliteTable(
   {
     challengeDayId: text()
       .notNull()
-      .references(() => challengeDayTable.id),
+      .references(() => challengeDayTable.id, { onDelete: 'cascade' }),
     userId: text()
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
   },
   (table) => ({
     id: primaryKey({

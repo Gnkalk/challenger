@@ -23,7 +23,7 @@ export default function CreateNewChallenge() {
   const [markdown, setMarkdown] = useState('');
 
   return (
-    <form className="space-y-4" action={action}>
+    <form className="space-y-4" action={action} method="POST">
       <DialogHeader>
         <DialogTitle>Make a new challenge</DialogTitle>
         <DialogDescription>
