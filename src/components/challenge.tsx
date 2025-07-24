@@ -64,7 +64,7 @@ export default function challenge({
             >
               <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale relative">
                 <span className="absolute text-5xl opacity-20">
-                  {date.getDate()}
+                  {date.getUTCDate()}
                 </span>
                 {challenge?.challengeDays
                   .find(

@@ -27,7 +27,7 @@ export default async function Join({
   const session = await auth();
 
   return (
-    <Card className="max-w-md mx-auto mt-20">
+    <Card className="max-w-md mx-auto mt-20 mb-4">
       <CardHeader>
         <CardTitle className="text-3xl">{challenge.name}</CardTitle>
         <div className="flex items-center gap-2 text-sm">
