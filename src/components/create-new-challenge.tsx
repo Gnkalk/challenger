@@ -23,7 +23,7 @@ export default function CreateNewChallenge() {
   const [markdown, setMarkdown] = useState('');
 
   return (
-    <form className="space-y-4" action={action} method="POST">
+    <form className="space-y-4" action={action}>
       <DialogHeader>
         <DialogTitle>Make a new challenge</DialogTitle>
         <DialogDescription>
@@ -64,7 +64,7 @@ export default function CreateNewChallenge() {
           <Button variant="outline">Cancel</Button>
         </DialogClose>
         <Button type="submit" loading={isPending}>
-          Save changes
+          Create new
         </Button>
       </DialogFooter>
     </form>

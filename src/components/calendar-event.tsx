@@ -33,7 +33,7 @@ export default function CalendarEvent({
   );
 
   return (
-    <Card className="w-fit py-4">
+    <Card className="w-full py-4">
       <CardContent className="px-4">
         <Calendar
           mode="single"
@@ -114,7 +114,7 @@ function ChallengeForm({ id }: { id: string }) {
   );
 
   return (
-    <form action={action} method="POST">
+    <form action={action}>
       <input type="hidden" name="challengeID" value={id} />
       <Button
         size="sm"

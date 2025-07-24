@@ -5,11 +5,11 @@ import db from './db';
 
 export const getChallenges = async () => {
   const session = await auth();
-  if (!session?.user?.id) throw new Error('Not logged in');
+  if (!session?.user) throw new Error('Not logged in');
 
   return (await db()).query.challengeParticipants
     .findMany({
-      where: ({ userId }, { eq }) => eq(userId, session.user?.id ?? ''),
+      where: ({ userId }, { eq }) => eq(userId, session.user?.id!),
       with: {
         challenge: {
           with: {
@@ -25,6 +25,8 @@ export type GetChallengesPromise = ReturnType<typeof getChallenges>;
 
 export const getChallenge = async (id: string) => {
   const session = await auth();
+
+  if (id.length < 1) return null;
 
   const challenge = await (
     await db()

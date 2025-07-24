@@ -11,6 +11,7 @@ import {
 } from './db/schema';
 import { z } from 'zod/v4';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 export const loginWithGoogleAction = async () => {
   await signIn('google', { redirectTo: '/dashboard' });
@@ -74,6 +75,8 @@ export const createChallengeAction = async (_prevData: any, form: FormData) => {
     })
     .execute();
 
+  revalidatePath('/dashboard');
+
   return undefined;
 };
 
@@ -104,6 +107,8 @@ export const joinChallengeAction = async (_prevData: any, form: FormData) => {
       userId: session.user?.id,
     })
     .execute();
+
+  revalidatePath('/dashboard');
 
   return undefined;
 };
@@ -187,6 +192,8 @@ export const doneChallengeAction = async (_prevData: any, form: FormData) => {
       })
       .execute();
   } finally {
+    revalidatePath('/dashboard');
+
     return undefined;
   }
 };
@@ -204,6 +211,32 @@ export const deleteChallengeAction = async (_prevData: any, form: FormData) => {
     .execute();
 
   console.log(challengeID);
+
+  revalidatePath('/dashboard');
+
+  return undefined;
+};
+
+export const updateChallengeAction = async (_prevData: any, form: FormData) => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: 'Not logged in' };
+
+  const challengeID = form.get('challengeID') as string | null;
+  if (!challengeID) return { error: 'Invalid challenge ID' };
+
+  await (
+    await db()
+  )
+    .update(challengesTable)
+    .set({
+      name: form.get('name') as string,
+      description: form.get('description') as string,
+      plan: form.get('plan') as string,
+    })
+    .where(eq(challengesTable.id, challengeID))
+    .execute();
+
+  revalidatePath('/dashboard');
 
   return undefined;
 };
