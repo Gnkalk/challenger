@@ -7,6 +7,7 @@ import { Share } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Markdown } from './md-editor';
 import { differenceInDays } from 'date-fns';
+import Link from 'next/link';
 
 export default function ChallengesList({
   promise,
@@ -80,14 +81,11 @@ export default function ChallengesList({
                   </span>
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-6"
-                onClick={() => router.push(`/join/${seletedChallenge?.id}`)}
-              >
-                <Share />
-              </Button>
+              <Link href={`/join/${seletedChallenge?.id}`}>
+                <Button variant="ghost" size="icon" className="size-6">
+                  <Share />
+                </Button>
+              </Link>
             </div>
             <Markdown source={seletedChallenge?.plan!} className="mt-2" />
           </div>

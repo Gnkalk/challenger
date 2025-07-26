@@ -13,7 +13,8 @@ import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import { auth } from '@/server/auth';
 import Link from 'next/link';
-import JoinChallenge from '@/components/join-challenge';
+import { ActionButton } from '@/components/ui/action-button';
+import { joinChallengeAction } from '@/server/actions';
 
 export default async function Join({
   params,
@@ -53,7 +54,12 @@ export default async function Join({
           ))}
         </div>
         {session ? (
-          <JoinChallenge challengeID={challenge.id} />
+          <ActionButton
+            className="w-full"
+            action={joinChallengeAction.bind(null, challenge.id)}
+          >
+            Join challenge
+          </ActionButton>
         ) : (
           <Link href="/login">
             <Button className="w-full">Login to join</Button>

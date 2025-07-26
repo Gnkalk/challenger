@@ -1,6 +1,5 @@
 'use client';
 import { Calendar } from './ui/calendar';
-import { useSearchParams } from 'next/navigation';
 import { GetChallengePromise } from '@/server/queries';
 import { use, useActionState, useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -21,21 +20,17 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { MarkdownEditor } from './md-editor';
 import { isSameDay } from 'date-fns';
+import { ActionButton } from './ui/action-button';
+import { enUS, faIR } from 'date-fns/locale';
 
 export default function challenge({
   challenge: challengePromise,
+  locale,
 }: {
   challenge: GetChallengePromise;
+  locale: 'en' | 'fa';
 }) {
   const challenge = use(challengePromise);
-  const searchParams = useSearchParams();
-  const date = new Date(searchParams.get('date')!);
-
-  const [_state, deleteChallenge, isDeletingChallenge] = useActionState(
-    deleteChallengeAction,
-    undefined
-  );
-
   const [markdown, setMarkdown] = useState('');
   const [state, updateChallenge, isUpdatingChallenge] = useActionState(
     updateChallengeAction,
@@ -53,6 +48,8 @@ export default function challenge({
         classNames={{
           root: 'p-0',
         }}
+        locale={locale === 'en' ? enUS : faIR}
+        weekStartsOn={locale === 'en' ? 0 : 6}
         components={{
           Day: ({ day: { date } }) => (
             <td
@@ -88,16 +85,14 @@ export default function challenge({
         ))}
         {challenge?.userCreateIt && (
           <>
-            <form action={deleteChallenge}>
-              <input type="hidden" name="challengeID" value={challenge.id} />
-              <Button
-                size="sm"
-                variant="destructive"
-                loading={isDeletingChallenge}
-              >
-                Delete
-              </Button>
-            </form>
+            <ActionButton
+              size="sm"
+              variant="destructive"
+              requireAreYouSure
+              action={deleteChallengeAction.bind(null, challenge.id)}
+            >
+              Delete
+            </ActionButton>
             <Dialog>
               <DialogTrigger asChild>
                 <Button

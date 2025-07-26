@@ -7,31 +7,19 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import CreateNewChallenge from './create-new-challenge';
 import { Skeleton } from './ui/skeleton';
-import { memo, Suspense, use, useActionState, useCallback } from 'react';
+import { memo, Suspense, use } from 'react';
 import { GetChallengesPromise } from '@/server/queries';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import { doneChallengeAction } from '@/server/actions';
+import { ActionButton } from './ui/action-button';
+import { enUS, faIR } from 'date-fns/locale';
 
 export default function CalendarEvent({
   getChallenges,
+  locale,
 }: {
   getChallenges: GetChallengesPromise;
+  locale: 'en' | 'fa';
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams]
-  );
-
   return (
     <Card className="w-full py-4">
       <CardContent className="px-4">
@@ -39,6 +27,8 @@ export default function CalendarEvent({
           mode="single"
           selected={new Date()}
           hideNavigation
+          locale={locale === 'en' ? enUS : faIR}
+          weekStartsOn={locale === 'en' ? 0 : 6}
           onSelect={() => {}}
           components={{
             MonthCaption: () => <p></p>,
@@ -98,30 +88,16 @@ function Challenges({ promise }: { promise: GetChallengesPromise }) {
                   By {challenge.challenge.challengeCreatedBy.name}
                 </div>
               </div>
-              <ChallengeForm id={challenge.challenge.id} />
+              <ActionButton
+                size="sm"
+                variant="outline"
+                action={doneChallengeAction.bind(null, challenge.challenge.id)}
+              >
+                <CheckCircle />
+              </ActionButton>
             </div>
           </div>
         ))}
     </div>
-  );
-}
-
-function ChallengeForm({ id }: { id: string }) {
-  const [state, action, isPending] = useActionState(
-    doneChallengeAction,
-    undefined
-  );
-
-  return (
-    <form action={action}>
-      <input type="hidden" name="challengeID" value={id} />
-      <Button
-        size="sm"
-        variant={state?.error ? 'destructive' : 'outline'}
-        loading={isPending}
-      >
-        <CheckCircle />
-      </Button>
-    </form>
   );
 }

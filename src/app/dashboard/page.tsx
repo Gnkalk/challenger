@@ -3,6 +3,7 @@ import ChallengeCalendar from '@/components/challenge';
 import ChallengesList from '@/components/challenges-list';
 import ProfileCard from '@/components/profile-card';
 import { Card, CardContent } from '@/components/ui/card';
+import { auth } from '@/server/auth';
 import { getChallenge, getChallenges } from '@/server/queries';
 import { Suspense } from 'react';
 
@@ -15,12 +16,17 @@ export default async function Dashboard({
   const currentChallenge = (await searchParams).challenge ?? '';
   const challenge = getChallenge(currentChallenge);
 
+  const session = await auth();
+
   return (
     <div className="flex items-center justify-center gap-6 w-full min-h-svh overflow-auto py-4">
       <div className="grid gap-y-2 md:gap-x-2 md:grid-cols-3 max-md:px-4">
         <div className="space-y-2 w-full">
           <ProfileCard />
-          <CalendarEvent getChallenges={challengesPromise} />
+          <CalendarEvent
+            getChallenges={challengesPromise}
+            locale={session?.user?.locale}
+          />
         </div>
         <div className="flex flex-col gap-2 md:col-span-2">
           <Card className="flex-1 py-2">
@@ -34,7 +40,10 @@ export default async function Dashboard({
             </CardContent>
           </Card>
           <Card className="flex-1">
-            <ChallengeCalendar challenge={challenge} />
+            <ChallengeCalendar
+              challenge={challenge}
+              locale={session?.user?.locale}
+            />
           </Card>
         </div>
       </div>

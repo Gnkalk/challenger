@@ -8,10 +8,12 @@ import {
   challengeDayTable,
   challengeParticipants,
   challengesTable,
+  usersTable,
 } from './db/schema';
 import { z } from 'zod/v4';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export const loginWithGoogleAction = async () => {
   await signIn('google', { redirectTo: '/dashboard' });
@@ -80,12 +82,9 @@ export const createChallengeAction = async (_prevData: any, form: FormData) => {
   return undefined;
 };
 
-export const joinChallengeAction = async (_prevData: any, form: FormData) => {
-  const challengeID = form.get('challengeID') as string | null;
-  if (!challengeID) return { error: 'Invalid challenge ID' };
-
+export const joinChallengeAction = async (challengeID: string) => {
   const session = await auth();
-  if (!session?.user?.id) return { error: 'Not logged in' };
+  if (!session?.user?.id) return { error: true, message: 'Not logged in' };
 
   const challenge = await (
     await db()
@@ -96,7 +95,7 @@ export const joinChallengeAction = async (_prevData: any, form: FormData) => {
     })
     .execute();
 
-  if (challenge) return { error: 'Already joined challenge' };
+  if (challenge) return { error: true, message: 'Already joined challenge' };
 
   await (
     await db()
@@ -110,15 +109,12 @@ export const joinChallengeAction = async (_prevData: any, form: FormData) => {
 
   revalidatePath('/dashboard');
 
-  return undefined;
+  return { error: false };
 };
 
-export const doneChallengeAction = async (_prevData: any, form: FormData) => {
+export const doneChallengeAction = async (challengeID: string) => {
   const session = await auth();
-  if (!session?.user?.id) return { error: 'Not logged in' };
-
-  const challengeID = form.get('challengeID') as string | null;
-  if (!challengeID) return { error: 'Invalid challenge ID' };
+  if (!session?.user?.id) return { error: true, message: 'Not logged in' };
 
   const challenge = await (
     await db()
@@ -133,7 +129,7 @@ export const doneChallengeAction = async (_prevData: any, form: FormData) => {
     })
     .execute();
 
-  if (!challenge) return { error: 'Not joined challenge' };
+  if (!challenge) return { error: true, message: 'Not joined challenge' };
 
   const startOfDay = new Date().setUTCHours(0, 0, 0, 0);
   const endOfDay = new Date().setUTCHours(23, 59, 59, 999);
@@ -194,27 +190,21 @@ export const doneChallengeAction = async (_prevData: any, form: FormData) => {
   } finally {
     revalidatePath('/dashboard');
 
-    return undefined;
+    return { error: false };
   }
 };
 
-export const deleteChallengeAction = async (_prevData: any, form: FormData) => {
+export const deleteChallengeAction = async (challengeID: string) => {
   const session = await auth();
-  if (!session?.user?.id) return { error: 'Not logged in' };
-
-  const challengeID = form.get('challengeID') as string | null;
-  if (!challengeID) return { error: 'Invalid challenge ID' };
+  if (!session?.user?.id) return { error: true, message: 'Not logged in' };
 
   await (await db())
     .delete(challengesTable)
     .where(eq(challengesTable.id, challengeID))
     .execute();
 
-  console.log(challengeID);
-
   revalidatePath('/dashboard');
-
-  return undefined;
+  redirect('/');
 };
 
 export const updateChallengeAction = async (_prevData: any, form: FormData) => {
@@ -239,4 +229,23 @@ export const updateChallengeAction = async (_prevData: any, form: FormData) => {
   revalidatePath('/dashboard');
 
   return undefined;
+};
+
+export const changeUserLocaleAction = async (locale: 'en' | 'fa') => {
+  const session = await auth();
+  if (!session?.user?.id) return { error: true, message: 'Not logged in' };
+
+  await (
+    await db()
+  )
+    .update(usersTable)
+    .set({
+      locale,
+    })
+    .where(eq(usersTable.id, session.user?.id))
+    .execute();
+
+  revalidatePath('/dashboard');
+
+  return { error: false, message: 'Language changed' };
 };

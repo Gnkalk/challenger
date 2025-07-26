@@ -52,6 +52,7 @@ export const usersTable = sqliteTable('user', {
   name: text('name'),
   email: text('email').unique(),
   emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
+  locale: text('locale', { enum: ['en', 'fa'] }).default('en'),
   image: text('image'),
 });
 
