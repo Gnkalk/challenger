@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import { NextAuthResult } from 'next-auth';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
@@ -11,6 +11,14 @@ import {
   usersTable,
   accountsTable,
 } from './db/schema';
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      locale: 'en' | 'fa';
+    } & DefaultSession['user'];
+  }
+}
 
 const authResult = async (): Promise<NextAuthResult> => {
   return NextAuth({

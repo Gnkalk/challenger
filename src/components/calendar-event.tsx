@@ -11,7 +11,8 @@ import { memo, Suspense, use } from 'react';
 import { GetChallengesPromise } from '@/server/queries';
 import { doneChallengeAction } from '@/server/actions';
 import { ActionButton } from './ui/action-button';
-import { enUS, faIR } from 'date-fns/locale';
+import { enUS } from 'react-day-picker/locale';
+import { faIR } from 'react-day-picker/persian';
 
 export default function CalendarEvent({
   getChallenges,

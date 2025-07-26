@@ -25,7 +25,7 @@ export default async function Dashboard({
           <ProfileCard />
           <CalendarEvent
             getChallenges={challengesPromise}
-            locale={session?.user?.locale}
+            locale={session?.user?.locale!}
           />
         </div>
         <div className="flex flex-col gap-2 md:col-span-2">
@@ -42,7 +42,7 @@ export default async function Dashboard({
           <Card className="flex-1">
             <ChallengeCalendar
               challenge={challenge}
-              locale={session?.user?.locale}
+              locale={session?.user?.locale!}
             />
           </Card>
         </div>

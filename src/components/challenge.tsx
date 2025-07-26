@@ -21,7 +21,8 @@ import { Textarea } from './ui/textarea';
 import { MarkdownEditor } from './md-editor';
 import { isSameDay } from 'date-fns';
 import { ActionButton } from './ui/action-button';
-import { enUS, faIR } from 'date-fns/locale';
+import { enUS } from 'react-day-picker/locale';
+import { faIR } from 'react-day-picker/persian';
 
 export default function challenge({
   challenge: challengePromise,
@@ -51,15 +52,13 @@ export default function challenge({
         locale={locale === 'en' ? enUS : faIR}
         weekStartsOn={locale === 'en' ? 0 : 6}
         components={{
-          Day: ({ day: { date } }) => (
+          Day: ({ day: { date }, children }) => (
             <td
               className="relative w-full h-full p-0 text-center [&amp;:first-child[data-selected=true]_button]:rounded-l-md [&amp;:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border-l border-accent"
               role="gridcell"
             >
               <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale relative">
-                <span className="absolute text-5xl opacity-20">
-                  {date.getUTCDate()}
-                </span>
+                <span className="absolute text-5xl opacity-20">{children}</span>
                 {challenge?.challengeDays
                   .find((day) => isSameDay(day.date, date))
                   ?.participants.map((participant) => (
