@@ -20,6 +20,7 @@ import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { MarkdownEditor } from './md-editor';
+import { isSameDay } from 'date-fns';
 
 export default function challenge({
   challenge: challengePromise,
@@ -49,14 +50,10 @@ export default function challenge({
     <div>
       <Calendar
         className="bg-transparent p-0"
-        month={date}
         classNames={{
           root: 'p-0',
         }}
-        hideNavigation
         components={{
-          MonthCaption: ({}) => <div></div>,
-          Nav: ({}) => <div></div>,
           Day: ({ day: { date } }) => (
             <td
               className="relative w-full h-full p-0 text-center [&amp;:first-child[data-selected=true]_button]:rounded-l-md [&amp;:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border-l border-accent"
@@ -67,11 +64,7 @@ export default function challenge({
                   {date.getUTCDate()}
                 </span>
                 {challenge?.challengeDays
-                  .find(
-                    (day) =>
-                      day.date.setUTCHours(0, 0, 0, 0) ===
-                      date.setUTCHours(0, 0, 0, 0)
-                  )
+                  .find((day) => isSameDay(day.date, date))
                   ?.participants.map((participant) => (
                     <Avatar key={participant.participant.id}>
                       <AvatarImage src={participant.participant.image!} />

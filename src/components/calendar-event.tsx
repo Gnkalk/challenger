@@ -37,12 +37,11 @@ export default function CalendarEvent({
       <CardContent className="px-4">
         <Calendar
           mode="single"
-          defaultMonth={new Date(searchParams.get('date') ?? new Date())}
-          selected={new Date(searchParams.get('date') ?? new Date())}
-          onSelect={(date) => {
-            router.push(
-              pathname + '?' + createQueryString('date', date.toDateString())
-            );
+          selected={new Date()}
+          hideNavigation
+          onSelect={() => {}}
+          components={{
+            MonthCaption: () => <p></p>,
           }}
           className="bg-transparent p-0"
           required

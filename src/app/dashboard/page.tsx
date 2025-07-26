@@ -17,12 +17,12 @@ export default async function Dashboard({
 
   return (
     <div className="flex items-center justify-center gap-6 w-full min-h-svh overflow-auto py-4">
-      <div className="grid gap-y-2 md:gap-x-2 md:grid-cols-3">
+      <div className="grid gap-y-2 md:gap-x-2 md:grid-cols-3 max-md:px-4">
         <div className="space-y-2 w-full">
           <ProfileCard />
           <CalendarEvent getChallenges={challengesPromise} />
         </div>
-        <div className="flex flex-col gap-2 col-span-2">
+        <div className="flex flex-col gap-2 md:col-span-2">
           <Card className="flex-1 py-2">
             <CardContent className="px-2">
               <Suspense>
