@@ -13,42 +13,69 @@ export default async function ProfileCard() {
   if (!session) redirect('/login');
 
   return (
-    <Card className="py-4">
-      <CardContent className="flex justify-between items-center">
-        <div className="flex items-center gap-1">
-          <Avatar className="rounded-lg">
-            <AvatarImage src={session?.user?.image!} />
-            <AvatarFallback className="rounded-lg">
-              {session?.user?.name ?? 'P'}
-            </AvatarFallback>
-          </Avatar>
-          {session.user && (
-            <div className="flex gap-2">
-              <ActionButton
-                size="sm"
-                className="text-xs p-1"
-                variant="outline"
-                action={changeUserLocaleAction.bind(
-                  null,
-                  session.user.locale === 'en' ? 'fa' : 'en'
-                )}
-              >
-                {session.user.locale === 'en' ? 'FA' : 'EN'}
-              </ActionButton>
-              <p className="text-xl font-bold mt-0.5">{session?.user?.name}</p>
+    <Card className="shadow-md">
+      <CardContent className="p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="size-14 sm:size-16 rounded-xl border-2 border-border">
+              <AvatarImage
+                src={session?.user?.image || undefined}
+                alt={session?.user?.name || 'User'}
+                className="object-cover"
+              />
+              <AvatarFallback className="rounded-xl text-lg font-semibold bg-primary/10 text-primary">
+                {session?.user?.name?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="text-xl font-bold text-foreground">
+                {session?.user?.name}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {session?.user?.email}
+              </p>
             </div>
-          )}
+          </div>
+
+          <div className="flex gap-2">
+            <form
+              action={async () => {
+                'use server';
+                await signOut({ redirectTo: '/login' });
+              }}
+            >
+              <Button variant="outline" size="sm" className="gap-2">
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </Button>
+            </form>
+          </div>
         </div>
-        <form
-          action={async () => {
-            'use server';
-            await signOut({ redirectTo: '/login' });
-          }}
-        >
-          <Button size="icon">
-            <LogOut />
-          </Button>
-        </form>
+
+        <div className="mt-6 pt-6 border-t border-border">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-muted-foreground">
+              Language
+            </span>
+            <form
+              action={async () => {
+                'use server';
+                await changeUserLocaleAction(
+                  session.user!.locale === 'en' ? 'fa' : 'en'
+                );
+              }}
+            >
+              <Button
+                type="submit"
+                variant="ghost"
+                size="sm"
+                className="text-xs px-4 py-2 rounded-lg transition-smooth hover:bg-accent"
+              >
+                {session.user?.locale === 'en' ? 'فارسی' : 'English'}
+              </Button>
+            </form>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

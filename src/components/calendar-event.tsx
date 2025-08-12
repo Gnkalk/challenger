@@ -22,8 +22,11 @@ export default function CalendarEvent({
   locale: 'en' | 'fa';
 }) {
   return (
-    <Card className="w-full py-4">
-      <CardContent className="px-4">
+    <Card className="w-full shadow-md">
+      <CardContent className="p-6 mx-auto">
+        <div className="mb-6">
+          <h3 className="text-xl font-bold text-foreground">Today's Date</h3>
+        </div>
         <Calendar
           mode="single"
           selected={new Date()}
@@ -38,29 +41,31 @@ export default function CalendarEvent({
           required
         />
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-3 border-t px-4 !pt-4">
+      <CardFooter className="flex flex-col items-start gap-6 border-t p-6">
         <div className="flex w-full items-center justify-between px-1">
-          <div className="text-sm font-medium">Challenges</div>
+          <div className="text-base font-bold text-foreground">
+            Today's Challenges
+          </div>
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="ghost"
-                size="icon"
-                className="size-6"
-                title="Make challenge"
+                variant="default"
+                size="sm"
+                className="gap-2 transition-smooth hover:bg-primary/90"
+                title="Create new challenge"
               >
-                <PlusIcon />
-                <span className="sr-only">Make challenge</span>
+                <PlusIcon className="w-4 h-4" />
+                New Challenge
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[500px]">
               <Suspense fallback={<Skeleton className="h-24" />}>
                 <CreateNewChallenge />
               </Suspense>
             </DialogContent>
           </Dialog>
         </div>
-        <Suspense fallback={<Skeleton className="h-20" />}>
+        <Suspense fallback={<Skeleton className="h-24" />}>
           <MemorizedChallenges promise={getChallenges} />
         </Suspense>
       </CardFooter>
@@ -73,32 +78,55 @@ const MemorizedChallenges = memo(Challenges);
 function Challenges({ promise }: { promise: GetChallengesPromise }) {
   const challenges = use(promise);
 
+  if (challenges.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground text-base">
+        No challenges for today
+      </div>
+    );
+  }
+
+  const openChallenges = challenges.filter(
+    (challenge) => challenge.challenge.status === 'open'
+  );
+
+  if (openChallenges.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground text-base">
+        All challenges completed! 🎉
+      </div>
+    );
+  }
+
   return (
-    <div className="flex w-full flex-col gap-2 max-h-28 overflow-auto noscrollbar">
-      {challenges
-        .filter((challenge) => challenge.challenge.status === 'open')
-        .map((challenge) => (
-          <div
-            key={challenge.challenge.id}
-            className="bg-muted after:bg-primary/70 relative rounded-md p-2 pl-6 text-sm after:absolute after:inset-y-2 after:left-2 after:w-1 after:rounded-full"
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="font-medium">{challenge.challenge.name}</div>
-                <div className="text-muted-foreground text-xs max-w-40">
-                  By {challenge.challenge.challengeCreatedBy.name}
-                </div>
+    <div className="flex w-full flex-col gap-3 max-h-48 overflow-auto noscrollbar pr-2">
+      {openChallenges.map((challenge) => (
+        <div
+          key={challenge.challenge.id}
+          className="bg-muted/50 hover:bg-muted/70 transition-smooth after:bg-primary/70 relative rounded-lg p-4 pl-8 text-sm after:absolute after:inset-y-2 after:left-3 after:w-1.5 after:rounded-full border border-border/50"
+        >
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-foreground truncate">
+                {challenge.challenge.name}
               </div>
-              <ActionButton
-                size="sm"
-                variant="outline"
-                action={doneChallengeAction.bind(null, challenge.challenge.id)}
-              >
-                <CheckCircle />
-              </ActionButton>
+              <div className="text-muted-foreground text-xs mt-1.5">
+                By {challenge.challenge.challengeCreatedBy.name}
+              </div>
             </div>
+            <ActionButton
+              size="sm"
+              variant="outline"
+              className="flex-shrink-0 transition-smooth"
+              action={doneChallengeAction.bind(null, challenge.challenge.id)}
+              title="Mark as completed"
+            >
+              Done
+              <CheckCircle className="w-4 h-4" />
+            </ActionButton>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 }

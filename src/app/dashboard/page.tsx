@@ -19,32 +19,55 @@ export default async function Dashboard({
   const session = await auth();
 
   return (
-    <div className="flex items-center justify-center gap-6 w-full min-h-svh overflow-auto py-4">
-      <div className="grid gap-y-2 md:gap-x-2 md:grid-cols-3 max-md:px-4">
-        <div className="space-y-2 w-full">
-          <ProfileCard />
-          <CalendarEvent
-            getChallenges={challengesPromise}
-            locale={session?.user?.locale!}
-          />
-        </div>
-        <div className="flex flex-col gap-2 md:col-span-2">
-          <Card className="flex-1 py-2">
-            <CardContent className="px-2">
-              <Suspense>
-                <ChallengesList
-                  promise={challengesPromise}
-                  challenge={challenge}
-                />
-              </Suspense>
-            </CardContent>
-          </Card>
-          <Card className="flex-1">
-            <ChallengeCalendar
-              challenge={challenge}
+    <div className="min-h-svh bg-gradient-to-br from-background via-background to-muted/20 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800/50">
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <header className="mb-10 sm:mb-16">
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground">
+            Welcome back,{' '}
+            <span className="text-gradient">{session?.user?.name}</span>!
+          </h1>
+          <p className="text-lg text-muted-foreground mt-3 max-w-2xl">
+            Track your progress and join new challenges to achieve your goals.
+            Stay motivated and see how far you've come!
+          </p>
+        </header>
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-1 space-y-4">
+            <ProfileCard />
+            <CalendarEvent
+              getChallenges={challengesPromise}
               locale={session?.user?.locale!}
             />
-          </Card>
+          </div>
+
+          <div className="lg:col-span-2 space-y-4">
+            <Card className="shadow-md">
+              <CardContent className="p-6 sm:p-8">
+                <Suspense
+                  fallback={
+                    <div className="text-center py-8 text-muted-foreground">
+                      Loading challenges...
+                    </div>
+                  }
+                >
+                  <ChallengesList
+                    promise={challengesPromise}
+                    challenge={challenge}
+                  />
+                </Suspense>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md">
+              <CardContent className="p-6 sm:p-8">
+                <ChallengeCalendar
+                  challenge={challenge}
+                  locale={session?.user?.locale!}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

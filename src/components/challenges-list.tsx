@@ -43,54 +43,93 @@ export default function ChallengesList({
 
   return (
     <>
-      <Tabs
-        value={searchParams.get('challenge')}
-        onValueChange={(value) => {
-          router.push(pathname + '?' + createQueryString('challenge', value));
-        }}
-      >
-        <TabsList>
-          {challenges.map((challenge) => (
-            <TabsTrigger
-              value={challenge.challengeId}
-              key={challenge.challenge.id}
-            >
-              {challenge.challenge.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h3 className="text-xl font-bold text-foreground">Your Challenges</h3>
+          {challenges.length === 0 && (
+            <p className="text-sm text-muted-foreground">No challenges yet</p>
+          )}
+        </div>
+
+        <Tabs
           value={searchParams.get('challenge')}
-          className="max-h-60 overflow-auto noscrollbar"
+          onValueChange={(value) => {
+            router.push(pathname + '?' + createQueryString('challenge', value));
+          }}
         >
-          <div className="px-2">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl capitalize font-bold">
-                  {seletedChallenge?.name}
-                </h2>
-                <p className="text-muted-foreground text-xs flex gap-1">
-                  <span>By {seletedChallenge?.challengeCreatedBy.name}</span>
-                  <span>•</span>
-                  <span>
-                    Day{' '}
-                    {differenceInDays(
-                      new Date(),
-                      seletedChallenge?.createdAt ?? new Date()
-                    ) + 1}
-                  </span>
-                </p>
-              </div>
-              <Link href={`/join/${seletedChallenge?.id}`}>
-                <Button variant="ghost" size="icon" className="size-6">
-                  <Share />
-                </Button>
-              </Link>
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 h-auto p-1 bg-muted/50">
+            {challenges.map((challenge) => (
+              <TabsTrigger
+                value={challenge.challengeId}
+                key={challenge.challenge.id}
+                className="text-sm font-medium py-2 px-3 rounded-md transition-smooth data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                {challenge.challenge.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <TabsContent
+            value={searchParams.get('challenge')}
+            className="mt-6 max-h-[500px] overflow-auto noscrollbar"
+          >
+            <div className="space-y-6">
+              {seletedChallenge ? (
+                <>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                    <div className="space-y-2">
+                      <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+                        {seletedChallenge.name}
+                      </h2>
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <span>By</span>
+                          <span className="font-medium text-foreground">
+                            {seletedChallenge.challengeCreatedBy.name}
+                          </span>
+                        </span>
+                        <span className="text-muted-foreground">•</span>
+                        <span className="flex items-center gap-1.5">
+                          <span>Day</span>
+                          <span className="font-medium text-foreground">
+                            {differenceInDays(
+                              new Date(),
+                              seletedChallenge.createdAt ?? new Date()
+                            ) + 1}
+                          </span>
+                        </span>
+                        <span className="text-muted-foreground">•</span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="font-medium text-foreground">
+                            {seletedChallenge.challengeParticipants.length}
+                          </span>
+                          <span>participants</span>
+                        </span>
+                      </div>
+                    </div>
+                    <Link href={`/join/${seletedChallenge.id}`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 transition-smooth hover:bg-accent"
+                      >
+                        <Share className="w-4 h-4" />
+                        Share
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:rounded-lg prose-pre:overflow-x-auto">
+                    <Markdown source={seletedChallenge.plan!} />
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p className="text-lg">Select a challenge to view details</p>
+                </div>
+              )}
             </div>
-            <Markdown source={seletedChallenge?.plan!} className="mt-2" />
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </>
   );
 }
