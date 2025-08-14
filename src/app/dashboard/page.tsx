@@ -61,10 +61,18 @@ export default async function Dashboard({
 
             <Card className="shadow-md">
               <CardContent className="p-6 sm:p-8">
-                <ChallengeCalendar
-                  challenge={challenge}
-                  locale={session?.user?.locale!}
-                />
+                <Suspense
+                  fallback={
+                    <div className="text-center py-8 text-muted-foreground">
+                      Loading calender...
+                    </div>
+                  }
+                >
+                  <ChallengeCalendar
+                    challenge={challenge}
+                    locale={session?.user?.locale!}
+                  />
+                </Suspense>
               </CardContent>
             </Card>
           </div>

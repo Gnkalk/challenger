@@ -19,11 +19,10 @@ import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { MarkdownEditor } from './md-editor';
-import { isSameDay, isSameMonth } from 'date-fns';
 import { ActionButton } from './ui/action-button';
 import { enUS } from 'react-day-picker/locale';
 import { faIR, getDateLib } from 'react-day-picker/persian';
-import { cn } from '@/lib/utils';
+import { cn, dateLib } from '@/lib/utils';
 
 export default function challenge({
   challenge: challengePromise,
@@ -67,9 +66,9 @@ export default function challenge({
               <td
                 className={cn(
                   'max-md:h-16 relative w-full text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border border-accent p-4 rounded-lg',
-                  locale === 'fa' && !getDateLib().isSameMonth(date, month)
+                  locale === 'en' && !dateLib(enUS).isSameMonth(date, month)
                     ? 'max-md:hidden'
-                    : !isSameMonth(date, month) && 'max-md:hidden'
+                    : !getDateLib().isSameMonth(date, month) && 'max-md:hidden'
                 )}
                 role="gridcell"
               >
@@ -78,7 +77,7 @@ export default function challenge({
                     {children}
                   </span>
                   {challenge?.challengeDays
-                    .find((day) => isSameDay(day.date, date))
+                    .find((day) => dateLib(enUS).isSameDay(day.date, date))
                     ?.participants.map((participant) => (
                       <Avatar
                         key={participant.participant.id}

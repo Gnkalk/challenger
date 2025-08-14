@@ -6,8 +6,9 @@ import { Button } from './ui/button';
 import { Share } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Markdown } from './md-editor';
-import { differenceInDays } from 'date-fns';
 import Link from 'next/link';
+import { dateLib } from '@/lib/utils';
+import { enUS } from 'react-day-picker/locale';
 
 export default function ChallengesList({
   promise,
@@ -91,7 +92,7 @@ export default function ChallengesList({
                         <span className="flex items-center gap-1.5">
                           <span>Day</span>
                           <span className="font-medium text-foreground">
-                            {differenceInDays(
+                            {dateLib(enUS).differenceInCalendarDays(
                               new Date(),
                               seletedChallenge.createdAt ?? new Date()
                             ) + 1}
