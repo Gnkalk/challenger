@@ -52,7 +52,7 @@ export default function CreateNewChallenge() {
               id="name-1"
               name="name"
               placeholder="e.g., '30 Days of Coding', 'Daily Meditation', 'Read 10 Pages a Day'"
-              className="input-field h-12"
+              className="h-12"
             />
           </div>
 
@@ -65,7 +65,7 @@ export default function CreateNewChallenge() {
               id="description-1"
               placeholder="Briefly describe your challenge and what participants can expect"
               rows={3}
-              className="input-field resize-none"
+              className="resize-none"
             />
           </div>
 

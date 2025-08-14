@@ -117,7 +117,7 @@ export default function ChallengesList({
                       </Button>
                     </Link>
                   </div>
-                  <div className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:rounded-lg prose-pre:overflow-x-auto">
+                  <div>
                     <Markdown source={seletedChallenge.plan!} />
                   </div>
                 </>

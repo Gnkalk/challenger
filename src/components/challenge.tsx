@@ -159,7 +159,6 @@ export default function challenge({
                         defaultValue={challenge.name}
                         name="name"
                         placeholder='e.g. "My first challenge"'
-                        className="input-field"
                       />
                     </div>
                     <div className="grid gap-3">
@@ -171,7 +170,7 @@ export default function challenge({
                         id="description-1"
                         defaultValue={challenge.description}
                         placeholder='e.g. "A brief description"'
-                        className="input-field min-h-[100px]"
+                        className=" min-h-[100px]"
                       />
                     </div>
                     <input type="hidden" name="plan" value={markdown} />
