@@ -43,9 +43,9 @@ export default function challenge({
   }, [challenge?.plan]);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-xl font-bold text-foreground mb-6">
+    <div className="space-y-2">
+      <div className="bg-card rounded-lg">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Challenge Calendar
         </h3>
         <Calendar
@@ -58,11 +58,11 @@ export default function challenge({
           components={{
             Day: ({ day: { date }, children }) => (
               <td
-                className="relative w-full h-full p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border-l border-accent"
+                className="relative w-full h-full text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border mx-1 border-accent p-4 rounded-lg"
                 role="gridcell"
               >
-                <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale relative">
-                  <span className="absolute text-5xl opacity-20">
+                <div className="*:data-[slot=avatar]:ring-background flex -space-x-1 *:data-[slot=avatar]:ring-1 *:data-[slot=avatar]:grayscale relative">
+                  <span className="absolute text-4xl opacity-20">
                     {children}
                   </span>
                   {challenge?.challengeDays
@@ -70,11 +70,11 @@ export default function challenge({
                     ?.participants.map((participant) => (
                       <Avatar
                         key={participant.participant.id}
-                        className="size-8 rounded-full border-2 border-background"
+                        className="size-8 rounded-full border border-background"
                       >
                         <AvatarImage src={participant.participant.image!} />
                         <AvatarFallback className="text-xs">
-                          {participant.participant.name}
+                          {participant.participant.name?.charAt(0) || 'U'}
                         </AvatarFallback>
                       </Avatar>
                     ))}
@@ -85,121 +85,147 @@ export default function challenge({
         />
       </div>
 
-      <div className="*:data-[slot=avatar]:ring-background flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 p-6 bg-card rounded-xl border border-border">
-        <div className="flex-1">
-          <h4 className="font-bold text-foreground mb-3">
+      <div className="bg-card rounded-lg border border-border p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-semibold text-foreground">
             Participants ({challenge?.challengeParticipants.length || 0})
           </h4>
-          <div className="flex flex-wrap gap-3">
-            {challenge?.challengeParticipants.map((participant) => (
-              <Avatar
-                key={participant.participant.id}
-                className="size-9 rounded-full border-2 border-background"
+          {challenge?.userCreateIt && (
+            <div className="flex gap-2">
+              <ActionButton
+                size="sm"
+                variant="ghost"
+                requireAreYouSure
+                action={deleteChallengeAction.bind(null, challenge.id)}
+                className="p-2"
               >
-                <AvatarImage src={participant.participant.image!} />
-                <AvatarFallback className="text-xs font-medium">
-                  {participant.participant.name}
-                </AvatarFallback>
-              </Avatar>
-            ))}
-          </div>
-        </div>
-
-        {challenge?.userCreateIt && (
-          <div className="flex gap-3">
-            <ActionButton
-              size="sm"
-              variant="destructive"
-              requireAreYouSure
-              action={deleteChallengeAction.bind(null, challenge.id)}
-            >
-              Delete
-            </ActionButton>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="gap-2 transition-smooth hover:bg-primary/90"
-                  title="update challenge"
+                <span className="sr-only">Delete</span>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <span>Update</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <form className="space-y-6" action={updateChallenge}>
-                  <input
-                    type="hidden"
-                    name="challengeID"
-                    value={challenge.id}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                   />
-                  <DialogHeader>
-                    <DialogTitle className="text-xl font-bold">
-                      Update challenge
-                    </DialogTitle>
-                    <DialogDescription className="text-base">
-                      Update challenge to start tracking your progress
-                      {state?.error && (
-                        <>
-                          <br />
-                          <span className="text-destructive font-medium">
-                            {state?.error}
-                          </span>
-                        </>
-                      )}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-6">
-                    <div className="grid gap-3">
-                      <Label htmlFor="name-1" className="font-medium">
-                        Name
-                      </Label>
-                      <Input
-                        id="name-1"
-                        defaultValue={challenge.name}
-                        name="name"
-                        placeholder='e.g. "My first challenge"'
+                </svg>
+              </ActionButton>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-2"
+                    title="update challenge"
+                  >
+                    <span className="sr-only">Update</span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                       />
+                    </svg>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <form className="space-y-6" action={updateChallenge}>
+                    <input
+                      type="hidden"
+                      name="challengeID"
+                      value={challenge.id}
+                    />
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold">
+                        Update challenge
+                      </DialogTitle>
+                      <DialogDescription className="text-base">
+                        Update challenge to start tracking your progress
+                        {state?.error && (
+                          <>
+                            <br />
+                            <span className="text-destructive font-medium">
+                              {state?.error}
+                            </span>
+                          </>
+                        )}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6">
+                      <div className="grid gap-3">
+                        <Label htmlFor="name-1" className="font-medium">
+                          Name
+                        </Label>
+                        <Input
+                          id="name-1"
+                          defaultValue={challenge.name}
+                          name="name"
+                          placeholder='e.g. "My first challenge"'
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label htmlFor="username-1" className="font-medium">
+                          Description
+                        </Label>
+                        <Textarea
+                          name="description"
+                          id="description-1"
+                          defaultValue={challenge.description}
+                          placeholder='e.g. "A brief description"'
+                          className=" min-h-[100px]"
+                        />
+                      </div>
+                      <input type="hidden" name="plan" value={markdown} />
+                      <div>
+                        <Label className="font-medium mb-2 block">Plan</Label>
+                        <MarkdownEditor
+                          value={markdown}
+                          onChange={(value) => setMarkdown(value ?? '')}
+                        />
+                      </div>
                     </div>
-                    <div className="grid gap-3">
-                      <Label htmlFor="username-1" className="font-medium">
-                        Description
-                      </Label>
-                      <Textarea
-                        name="description"
-                        id="description-1"
-                        defaultValue={challenge.description}
-                        placeholder='e.g. "A brief description"'
-                        className=" min-h-[100px]"
-                      />
-                    </div>
-                    <input type="hidden" name="plan" value={markdown} />
-                    <div>
-                      <Label className="font-medium mb-2 block">Plan</Label>
-                      <MarkdownEditor
-                        value={markdown}
-                        onChange={(value) => setMarkdown(value ?? '')}
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button
-                        variant="outline"
-                        className="transition-smooth hover:bg-accent"
-                      >
-                        Cancel
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button
+                          variant="outline"
+                          className="transition-smooth hover:bg-accent"
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                      <Button type="submit" loading={isUpdatingChallenge}>
+                        Update Challenge
                       </Button>
-                    </DialogClose>
-                    <Button type="submit" loading={isUpdatingChallenge}>
-                      Update Challenge
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 noscrollbar">
+          {challenge?.challengeParticipants.map((participant) => (
+            <Avatar
+              key={participant.participant.id}
+              className="flex-shrink-0 size-8 rounded-full border border-background"
+            >
+              <AvatarImage src={participant.participant.image!} />
+              <AvatarFallback className="text-xs">
+                {participant.participant.name?.charAt(0) || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          ))}
+        </div>
       </div>
     </div>
   );

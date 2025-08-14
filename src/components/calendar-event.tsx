@@ -22,26 +22,28 @@ export default function CalendarEvent({
   locale: 'en' | 'fa';
 }) {
   return (
-    <Card className="w-full shadow-md">
-      <CardContent className="p-6 mx-auto">
+    <Card className="w-full shadow-lg border-border/50">
+      <CardContent className="p-6">
         <div className="mb-6">
           <h3 className="text-xl font-bold text-foreground">Today's Date</h3>
         </div>
-        <Calendar
-          mode="single"
-          selected={new Date()}
-          hideNavigation
-          locale={locale === 'en' ? enUS : faIR}
-          weekStartsOn={locale === 'en' ? 0 : 6}
-          onSelect={() => {}}
-          components={{
-            MonthCaption: () => <p></p>,
-          }}
-          className="bg-transparent p-0"
-          required
-        />
+        <div className="w-full overflow-x-auto">
+          <Calendar
+            mode="single"
+            selected={new Date()}
+            hideNavigation
+            locale={locale === 'en' ? enUS : faIR}
+            weekStartsOn={locale === 'en' ? 0 : 6}
+            onSelect={() => {}}
+            components={{
+              MonthCaption: () => <p></p>,
+            }}
+            className="bg-card rounded-lg border border-border p-2 shadow-sm w-full"
+            required
+          />
+        </div>
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-6 border-t p-6">
+      <CardFooter className="flex flex-col items-start gap-6 border-t border-border/50 p-6 bg-muted/30">
         <div className="flex w-full items-center justify-between px-1">
           <div className="text-base font-bold text-foreground">
             Today's Challenges
@@ -51,7 +53,7 @@ export default function CalendarEvent({
               <Button
                 variant="default"
                 size="sm"
-                className="gap-2 transition-smooth hover:bg-primary/90"
+                className="gap-2 transition-smooth hover:bg-primary/90 shadow-sm"
                 title="Create new challenge"
               >
                 <PlusIcon className="w-4 h-4" />
@@ -103,8 +105,9 @@ function Challenges({ promise }: { promise: GetChallengesPromise }) {
       {openChallenges.map((challenge) => (
         <div
           key={challenge.challenge.id}
-          className="bg-muted/50 hover:bg-muted/70 transition-smooth after:bg-primary/70 relative rounded-lg p-4 pl-8 text-sm after:absolute after:inset-y-2 after:left-3 after:w-1.5 after:rounded-full border border-border/50"
+          className="bg-card/80 hover:bg-card/90 transition-all duration-200 hover:shadow-md relative rounded-lg p-4 pl-8 text-sm border border-border/50 shadow-sm"
         >
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-l-lg"></div>
           <div className="flex justify-between items-center gap-4">
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-foreground truncate">
@@ -117,12 +120,12 @@ function Challenges({ promise }: { promise: GetChallengesPromise }) {
             <ActionButton
               size="sm"
               variant="outline"
-              className="flex-shrink-0 transition-smooth"
+              className="flex-shrink-0 transition-all duration-200 hover:bg-primary/10 hover:border-primary/30"
               action={doneChallengeAction.bind(null, challenge.challenge.id)}
               title="Mark as completed"
             >
-              Done
               <CheckCircle className="w-4 h-4" />
+              <span className="hidden sm:inline ml-1">Done</span>
             </ActionButton>
           </div>
         </div>

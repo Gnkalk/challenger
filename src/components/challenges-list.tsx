@@ -106,7 +106,7 @@ export default function ChallengesList({
                         </span>
                       </div>
                     </div>
-                    <Link href={`/join/${seletedChallenge.id}`}>
+                    <Link href={`/join/${seletedChallenge.id}`} target="_blank">
                       <Button
                         variant="outline"
                         size="sm"

@@ -15,7 +15,7 @@ export default async function ProfileCard() {
   return (
     <Card className="shadow-md">
       <CardContent className="p-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <Avatar className="size-14 sm:size-16 rounded-xl border-2 border-border">
               <AvatarImage
@@ -71,7 +71,7 @@ export default async function ProfileCard() {
                 size="sm"
                 className="text-xs px-4 py-2 rounded-lg transition-smooth hover:bg-accent"
               >
-                {session.user?.locale === 'en' ? 'فارسی' : 'English'}
+                {session.user?.locale === 'fa' ? 'فارسی' : 'English'}
               </Button>
             </form>
           </div>
