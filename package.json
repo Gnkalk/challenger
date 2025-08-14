@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.10.0",
 		"@base-ui-components/react": "1.0.0-beta.1",
+		"@date-fns/tz": "^1.4.1",
 		"@opennextjs/cloudflare": "^1.5.1",
 		"@radix-ui/react-alert-dialog": "^1.1.14",
 		"@radix-ui/react-avatar": "^1.1.10",

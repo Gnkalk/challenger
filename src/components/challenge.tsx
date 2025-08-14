@@ -19,10 +19,11 @@ import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { MarkdownEditor } from './md-editor';
-import { isSameDay } from 'date-fns';
+import { isSameDay, isSameMonth } from 'date-fns';
 import { ActionButton } from './ui/action-button';
 import { enUS } from 'react-day-picker/locale';
-import { faIR } from 'react-day-picker/persian';
+import { faIR, getDateLib } from 'react-day-picker/persian';
+import { cn } from '@/lib/utils';
 
 export default function challenge({
   challenge: challengePromise,
@@ -37,6 +38,7 @@ export default function challenge({
     updateChallengeAction,
     undefined
   );
+  const [month, setMonth] = useState(new Date());
 
   useEffect(() => {
     setMarkdown(challenge?.plan ?? '');
@@ -52,17 +54,27 @@ export default function challenge({
           className="bg-transparent p-0"
           classNames={{
             root: 'p-0',
+            weekdays: 'flex gap-2 max-md:hidden',
+            weeks: 'space-y-2',
+            week: 'flex flex-col md:flex-row gap-2',
           }}
           locale={locale === 'en' ? enUS : faIR}
           weekStartsOn={locale === 'en' ? 0 : 6}
+          month={month}
+          onMonthChange={(date) => setMonth(date)}
           components={{
             Day: ({ day: { date }, children }) => (
               <td
-                className="relative w-full h-full text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border mx-1 border-accent p-4 rounded-lg"
+                className={cn(
+                  'max-md:h-16 relative w-full text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none rdp-day text-muted-foreground aria-selected:text-muted-foreground rdp-outside border border-accent p-4 rounded-lg',
+                  locale === 'fa' && !getDateLib().isSameMonth(date, month)
+                    ? 'max-md:hidden'
+                    : !isSameMonth(date, month) && 'max-md:hidden'
+                )}
                 role="gridcell"
               >
-                <div className="*:data-[slot=avatar]:ring-background flex -space-x-1 *:data-[slot=avatar]:ring-1 *:data-[slot=avatar]:grayscale relative">
-                  <span className="absolute text-4xl opacity-20">
+                <div className="md:h-36 *:data-[slot=avatar]:ring-background flex md:flex-col flex-wrap -space-y-1 *:data-[slot=avatar]:ring-1 *:data-[slot=avatar]:grayscale relative">
+                  <span className="absolute md:text-4xl opacity-20">
                     {children}
                   </span>
                   {challenge?.challengeDays
