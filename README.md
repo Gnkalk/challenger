@@ -1,8 +1,12 @@
-<img src="/public/logo.png" align="left" height="100">
+<div align="left">
+<img src="/public/logo.png" align="left" height="100" hspace="10px">
 
 # Challenger 🚀
 
 A personal project for building and tracking daily habits, tailored for my own usage.
+</div>
+    
+
 
 <details>
 <summary>Screenshots (Click to expand)</summary>
