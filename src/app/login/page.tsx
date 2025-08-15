@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import { auth } from '@/server/auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function LoginPage() {
   const session = await auth();
@@ -17,13 +18,13 @@ export default async function LoginPage() {
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <a
-          href="#"
+        <Link
+          href="/"
           className="flex items-center gap-2 self-center font-bold text-2xl"
         >
           Challenger
           <Leaf className="size-8 " />
-        </a>
+        </Link>
         <Card className="shadow-lg py-6">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">

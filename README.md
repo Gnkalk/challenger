@@ -1,6 +1,17 @@
+<img src="/public/logo.png" align="left" height="100">
+
 # Challenger 🚀
 
 A personal project for building and tracking daily habits, tailored for my own usage.
+
+<details>
+<summary>Screenshots (Click to expand)</summary>
+
+[![Screenshot 1](/public/screenshots/screenshot_1.png)](public/screenshots/screenshot_1.png)
+[![Screenshot 2](/public/screenshots/screenshot_2.png)](public/screenshots/screenshot_2.png)
+
+</details>
+
 
 ## ✨ What's it all about?
 
