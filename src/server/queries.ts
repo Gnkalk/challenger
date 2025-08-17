@@ -38,6 +38,7 @@ export const getChallenge = async (id: string) => {
         challengeDays: {
           with: {
             participants: {
+              orderBy: ({ doneAt }, { asc }) => asc(doneAt),
               with: {
                 participant: true,
               },

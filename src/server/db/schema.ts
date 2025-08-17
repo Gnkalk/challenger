@@ -166,6 +166,9 @@ export const challengeParticipantsRelations = relations(
 export const challengeDayParticipants = sqliteTable(
   'challenge_day_participant',
   {
+    doneAt: integer('done_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
     challengeDayId: text()
       .notNull()
       .references(() => challengeDayTable.id, { onDelete: 'cascade' }),
